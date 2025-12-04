@@ -1,0 +1,19 @@
+@model CondoHub.Models.Entities.Maintenance
+
+<h2 class="fw-bold mb-4">@Model.Titulo</h2>
+
+<p>@Model.Descricao</p>
+
+<p><strong>Data Agendada:</strong> @Model.DataAgendada.ToString("dd/MM/yyyy")</p>
+<p><strong>Categoria:</strong> @Model.Category</p>
+<p><strong>Prioridade:</strong> @Model.Priority</p>
+@functions{
+	private string GetStatusText(CondoHub.Models.Entities.MaintenanceStatus status)
+	{
+		return status == CondoHub.Models.Entities.MaintenanceStatus.EmAndamento ? "Agendada" : status.ToString();
+	}
+}
+
+<p><strong>Status:</strong> @GetStatusText(Model.Status)</p>
+
+<a asp-action="Index" class="btn btn-secondary">Voltar</a>

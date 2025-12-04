@@ -1,0 +1,30 @@
+@using CondoHub.Models.Entities
+@model CondoHub.Models.Entities.Maintenance
+
+<h2 class="fw-bold mb-4">Editar Manutenção</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label>Título</label>
+        <input asp-for="Titulo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Descrição</label>
+        <textarea asp-for="Descricao" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label>Status</label>
+        <select asp-for="Status" class="form-select">
+            @foreach (var s in Enum.GetValues(typeof(MaintenanceStatus)))
+            {
+                <option value="@s">@s</option>
+            }
+        </select>
+    </div>
+
+    <button class="btn btn-primary">Salvar</button>
+</form>

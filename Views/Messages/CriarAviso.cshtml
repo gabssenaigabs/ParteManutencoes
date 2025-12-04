@@ -1,0 +1,91 @@
+
+@model CondoHub.Models.Entities.Messages
+@{
+    ViewData["Title"] = "Novo Aviso";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <h3 class="app-title">Novo Aviso</h3>
+                <p class="app-subtitle mb-0">Publique um comunicado para todos os moradores</p>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="CriarAviso" method="post" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Título</label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Título do comunicado" />
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Mensagem</label>
+                            <textarea asp-for="Mensagem" class="form-control" placeholder="Escreva o comunicado aqui..."></textarea>
+                            <span asp-validation-for="Mensagem" class="text-danger small"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500 mb-2">Tipo de Aviso</label>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" name="Tipo" id="tipoManutencao" value="Manutenção" autocomplete="off">
+                                    <label class="btn btn-light w-100 d-flex align-items-center px-3 py-2" for="tipoManutencao" style="border-radius: 12px; border: 1.5px solid #e0e0e0;">
+                                        <span style="width:12px; height:12px; border-radius:50%; background:#ff9800; display:inline-block; margin-right:8px;"></span>
+                                        Manutenção
+                                    </label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" name="Tipo" id="tipoEvento" value="Evento" autocomplete="off">
+                                    <label class="btn btn-light w-100 d-flex align-items-center px-3 py-2" for="tipoEvento" style="border-radius: 12px; border: 1.5px solid #e0e0e0;">
+                                        <span style="width:12px; height:12px; border-radius:50%; background:#2979ff; display:inline-block; margin-right:8px;"></span>
+                                        Evento
+                                    </label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" name="Tipo" id="tipoComunicado" value="Comunicado" autocomplete="off">
+                                    <label class="btn btn-light w-100 d-flex align-items-center px-3 py-2" for="tipoComunicado" style="border-radius: 12px; border: 1.5px solid #e0e0e0;">
+                                        <span style="width:12px; height:12px; border-radius:50%; background:#00c853; display:inline-block; margin-right:8px;"></span>
+                                        Comunicado
+                                    </label>
+                                </div>
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" name="Tipo" id="tipoAviso" value="Aviso" autocomplete="off">
+                                    <label class="btn btn-light w-100 d-flex align-items-center px-3 py-2" for="tipoAviso" style="border-radius: 12px; border: 1.5px solid #e0e0e0;">
+                                        <span style="width:12px; height:12px; border-radius:50%; background:#f44336; display:inline-block; margin-right:8px;"></span>
+                                        Aviso
+                                    </label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Tipo" class="text-danger small"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500 mb-2">Adicionar imagem</label>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <label
+                                    style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid #E0E0E0; background:#F9F9F9; cursor:pointer; color:#6c757d; font-size:0.9rem; display:flex; align-items:center; justify-content:center;">
+                                    <input asp-for="ImagemPath" type="file" accept=".jpg,.png,.jpeg"
+                                        style="display:none;" />
+                                    Escolher arquivo
+                                </label>
+                            </div>
+                            <span asp-validation-for="ImagemPath" class="text-danger small ms-2"></span>
+                        </div>
+                        <div class="mt-4 contract-action-buttons">
+                            <a href="@Url.Action("Mural", "Messages")" class="contract-btn contract-btn-cancel">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="contract-btn contract-btn-submit">
+                                Publicar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

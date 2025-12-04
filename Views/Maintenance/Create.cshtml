@@ -1,0 +1,138 @@
+@model CondoHub.Models.Entities.Maintenance
+@{
+    ViewData["Title"] = "Nova Manutenção";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h3 class="app-title">Nova Manutenção</h3>
+                        <p class="app-subtitle mb-0">Registre uma nova solicitação de manutenção</p>
+                    </div>
+
+                    <form id="maintenanceForm" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Título</label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Título da manutenção" />
+                            <span asp-validation-for="Titulo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Descrição</label>
+                            <textarea asp-for="Descricao" class="form-control"
+                                placeholder="Descreva o problema ou manutenção necessária..."></textarea>
+                            <span asp-validation-for="Descricao" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Categoria</label>
+                            <select asp-for="Category" class="form-control">
+                                <option value="">Selecione...</option>
+                                <option value="1">Encanamento</option>
+                                <option value="2">Elétrica</option>
+                                <option value="3">Pintura</option>
+                                <option value="4">Limpeza</option>
+                                <option value="5">Elevador</option>
+                                <option value="6">Jardim</option>
+                                <option value="7">Segurança</option>
+                                <option value="8" selected>Outros</option>
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Prioridade</label>
+                            <select asp-for="Priority" class="form-control">
+                                <option value="1">Baixa</option>
+                                <option value="2" selected>Média</option>
+                                <option value="3">Alta</option>
+                                <option value="4">Urgente</option>
+                            </select>
+                            <span asp-validation-for="Priority" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Data Agendada</label>
+                            <input asp-for="DataAgendada" type="date" class="form-control" />
+                            <span asp-validation-for="DataAgendada" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500">Empresa Responsável</label>
+                            <input asp-for="Empresa" class="form-control" placeholder="Nome da Empresa" />
+                            <span asp-validation-for="Empresa" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-500 mb-2">Status</label>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" asp-for="Status" id="statusAgendada"
+                                        value="2" checked>
+                                    <label class="btn btn-light w-100 d-flex align-items-center px-3 py-2"
+                                        for="statusAgendada" style="border-radius: 12px; border: 1.5px solid #e0e0e0;">
+                                        <span
+                                            style="width:12px; height:12px; border-radius:50%; background:#2979ff; display:inline-block; margin-right:8px;"></span>
+                                        Agendada
+                                    </label>
+                                </div>
+
+                                <div class="col-6">
+                                    <input type="radio" class="btn-check" asp-for="Status" id="statusConcluida"
+                                        value="3">
+                                    <label class="btn btn-light w-100 d-flex align-items-center px-3 py-2"
+                                        for="statusConcluida" style="border-radius: 12px; border: 1.5px solid #e0e0e0;">
+                                        <span
+                                            style="width:12px; height:12px; border-radius:50%; background:#00c853; display:inline-block; margin-right:8px;"></span>
+                                        Concluída
+                                    </label>
+                                </div>
+                            </div>
+
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mt-4 contract-action-buttons">
+                            <a href="@Url.Action("Index", "Maintenance")" class="contract-btn contract-btn-cancel">
+                                Cancelar
+                            </a>
+                            <button type="submit" class="contract-btn contract-btn-submit" onclick="document.getElementById('maintenanceForm').submit();">
+                                Agendar
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<script>
+    (function(){
+        var form = document.getElementById('maintenanceForm');
+        var btn = document.querySelector('.contract-btn-submit');
+        if (!form || !btn) return;
+
+        btn.addEventListener('click', function (e) {
+            setTimeout(function () {
+                try {
+                    if (typeof form.requestSubmit === 'function') form.requestSubmit();
+                } catch (ex) {
+                    try { form.submit(); } catch (ignore) {}
+                }
+            }, 150);
+        });
+    })();
+</script>

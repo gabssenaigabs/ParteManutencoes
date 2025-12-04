@@ -1,0 +1,299 @@
+@model IEnumerable<CondoHub.Models.Entities.Maintenance>
+
+@{
+    ViewData["Title"] = "Manutenções";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var activeTab = ViewBag.CurrentFilter ?? "all";
+}
+
+@if (User?.Identity != null && User.Identity.IsAuthenticated)
+{
+    <partial name="_Sidebar" />
+}
+
+<style>
+    .manutencoes-header {
+        position: fixed;
+        top: 0;
+        left: 250px;
+        height: 120px;
+        width: calc(100% - 250px);
+        background: linear-gradient(90deg, #f59e0b 0%, #dc2626 100%);
+        background-size: cover;
+        padding: 25px 0 25px 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .main-content {
+        margin-left: 250px;
+        margin-top: 120px;
+        position: relative;
+        z-index: 1;
+    }
+    .main-content .container {
+        max-width: 920px;
+        margin: 40px auto 0 auto;
+    }
+    .maintenance-header {
+        text-align: left;
+    }
+    .maintenance-header .btn-group {
+        display: inline-flex;
+        gap: 8px;
+        justify-content: center;
+    }
+    .maintenance-header .btn {
+        border-radius: 999px;
+        padding: 6px 12px;
+    }
+
+    .filter-bar{
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #f3f4f6;
+        padding: 6px;
+        border-radius: 12px;
+        box-shadow: none;
+        border: 1px solid #eef2f6;
+    }
+    .filter-pill{
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #1f2937;
+        background: transparent;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid transparent;
+        transition: all 160ms ease;
+    }
+    .filter-pill:hover{ text-decoration:none; transform: translateY(-1px); }
+    .filter-pill.active{
+        background: #ffffff;
+        box-shadow: 0 6px 12px rgba(15, 23, 42, 0.06);
+        color: #0f172a;
+        border-color: #eef2f6;
+        transform: none;
+    }
+</style>
+
+<div class="manutencoes-header">
+    <div class="d-flex justify-content-between align-items-center w-100" style="height: 100%;">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-tools" style="font-size: 36px; color: white;"></i>
+            <div>
+                <h1 class="mb-0 text-white fw-bold" style="font-size: 32px; line-height: 1;">Manutenções</h1>
+                <p class="mb-0 text-white" style="font-size: 14px; opacity: 0.9;">Solicitações e histórico de manutenções</p>
+            </div>
+        </div>
+        <a asp-action="Create" class="btn d-inline-flex align-items-center"
+            style="background: #fff; color: #dc2626; border: none; min-width: 140px; font-weight: 500; font-size: 16px; margin-right: 36px; text-decoration:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"
+                stroke="#dc2626" stroke-width="2" style="margin-right: 6px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Nova Solicitação
+        </a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="container mt-5">
+        <div class="card" style="padding: 20px; border-radius: 12px; border: 1px solid #e9eef2; box-shadow: 0 1px 4px rgba(16,24,40,0.03);">
+            <div class="mb-4 maintenance-header">
+                <h1 class="app-title mb-1">Lista de Manutenções</h1>
+                <p class="app-subtitle mb-3">Acompanhe todas as solicitações e serviços programados</p>
+
+                <div style="display: flex; justify-content: flex-start; margin-bottom: 30px;">
+                    <div style="display: flex; gap: 15px; background: #f5f5f5; padding: 8px; border-radius: 20px;">
+                        <a href="@Url.Action("Index", new { filter = "all" })" class="imoveis-tab-link"
+                            style="padding: 10px 20px; border-radius: 12px; text-decoration: none; color: #333; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; background: @(activeTab == "all" ? "#ffffff" : "transparent"); box-shadow: @(activeTab == "all" ? "0 2px 8px rgba(0,0,0,0.1)" : "none");">
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+                            <span>Todas</span>
+                        </a>
+                        <a href="@Url.Action("Index", new { filter = "andamento" })" class="imoveis-tab-link"
+                            style="padding: 10px 20px; border-radius: 12px; text-decoration: none; color: #333; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; background: @(activeTab == "andamento" ? "#ffffff" : "transparent"); box-shadow: @(activeTab == "andamento" ? "0 2px 8px rgba(0,0,0,0.1)" : "none");">
+                            <i class="bi bi-calendar3"></i>
+                            <span>Agendadas</span>
+                        </a>
+                        <a href="@Url.Action("Index", new { filter = "concluida" })" class="imoveis-tab-link"
+                            style="padding: 10px 20px; border-radius: 12px; text-decoration: none; color: #333; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; background: @(activeTab == "concluida" ? "#ffffff" : "transparent"); box-shadow: @(activeTab == "concluida" ? "0 2px 8px rgba(0,0,0,0.1)" : "none");">
+                            <i class="bi bi-check2-circle"></i>
+                            <span>Concluídas</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="maintenance-list">
+            @if (Model != null && Model.Any())
+            {
+                foreach (var m in Model)
+                {
+                    <div class="card mb-3 maintenance-card">
+                        <div class="card-body d-flex align-items-start">
+                            <div class="flex-fill">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h5 class="mb-1" style="font-size:18px;">@m.Titulo</h5>
+                                        <p class="text-muted mb-2">@m.Descricao</p>
+                                    </div>
+                                    <div class="text-end d-flex flex-column align-items-end" style="gap:6px;">
+                                        <span class="badge status-badge @GetStatusClass(m.Status)">@GetStatusText(m.Status)</span>
+                                        @if (ViewBag.IsGestor == true && m.Status != CondoHub.Models.Entities.MaintenanceStatus.Concluída)
+                                        {
+                                            <button type="button" class="btn btn-sm btn-outline-success complete-btn" data-id="@m.Id" title="Marcar como concluída">Concluir</button>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2 mt-2 align-items-center">
+                                    <span class="tag"><i class="bi bi-calendar3"></i> @m.DataAgendada.ToString("dd/MM/yyyy")</span>
+                                    <span class="tag">@m.Category</span>
+                                    @if (!string.IsNullOrEmpty(m.Empresa))
+                                    {
+                                        <span class="tag tag-green">@m.Empresa</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="padding: 40px 20px; text-align: center;">
+                    <p style="font-size:16px; color:#6b7280; margin:0;">Nenhuma manutenção encontrada.</p>
+                </div>
+            }
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+@functions{
+    private string GetStatusClass(CondoHub.Models.Entities.MaintenanceStatus status)
+    {
+        return status switch
+        {
+            CondoHub.Models.Entities.MaintenanceStatus.Pendente => "status-pendente",
+            CondoHub.Models.Entities.MaintenanceStatus.EmAndamento => "status-andamento",
+            CondoHub.Models.Entities.MaintenanceStatus.Concluída => "status-concluida",
+            CondoHub.Models.Entities.MaintenanceStatus.Cancelada => "status-cancelada",
+            _ => ""
+        };
+    }
+
+    private string GetStatusText(CondoHub.Models.Entities.MaintenanceStatus status)
+    {
+        return status switch
+        {
+            CondoHub.Models.Entities.MaintenanceStatus.EmAndamento => "Agendada",
+            CondoHub.Models.Entities.MaintenanceStatus.Pendente => "Pendente",
+            CondoHub.Models.Entities.MaintenanceStatus.Concluída => "Concluída",
+            CondoHub.Models.Entities.MaintenanceStatus.Cancelada => "Cancelada",
+            _ => status.ToString()
+        };
+    }
+}
+
+<style>
+    .maintenance-card{ border-radius:12px; box-shadow:0 1px 6px rgba(0,0,0,0.04); }
+    .tag{ display:inline-flex; align-items:center; gap:6px; background:#f3f4f6; padding:6px 10px; border-radius:8px; font-size:13px; color:#374151; }
+    .tag-green{ background:#d1fae5; color:#065f46; }
+    .status-badge{ padding:6px 12px; border-radius:12px; font-weight:600; }
+    .status-pendente{ background:#f8fafc; color:#374151; border:1px solid #e5e7eb; }
+    .status-andamento{ background:#f6f6f7; color:#374151; }
+    .status-concluida{ background:#ecfdf5; color:#065f46; }
+    .status-cancelada{ background:#fff1f2; color:#9f1239; }
+    .empty-message{ max-width:640px; margin:18px auto; }
+    .complete-btn{
+        background: #ffffff;
+        border: 1px solid #eef2f6;
+        color: #1f2937; 
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-weight:600;
+        font-size:14px;
+        min-width:84px;
+        height:36px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        box-shadow: none; 
+        cursor: pointer;
+        transition: none;
+        outline: none;
+    }
+    .complete-btn:hover,
+    .complete-btn:focus,
+    .complete-btn:active,
+    .complete-btn:focus-visible {
+        background: #ffffff !important;
+        color: #1f2937 !important;
+        border-color: #eef2f6 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        outline: none !important;
+    }
+    .complete-btn:disabled{
+        background:#ffffff;
+        color:#6b7280;
+        border-color:#eef2f6;
+        opacity:0.9;
+        cursor:default;
+        box-shadow:none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        document.querySelectorAll('.complete-btn').forEach(function(btn){
+            btn.addEventListener('click', async function(e){
+                var id = btn.getAttribute('data-id');
+                if (!id) return;
+                if (!confirm('Marcar essa manutenção como Concluída?')) return;
+
+                try{
+                    const form = new FormData();
+                    form.append('id', id);
+                    form.append('status', '3');
+
+                    const resp = await fetch('/Maintenance/UpdateStatus?id=' + encodeURIComponent(id) + '&status=3', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (!resp.ok) throw new Error('Request failed');
+                    const data = await resp.json();
+                        if (data && data.success){
+                            const card = btn.closest('.maintenance-card');
+                            if (card){
+                                const badge = card.querySelector('.status-badge');
+                                if (badge){
+                                    badge.textContent = data.status;
+                                    badge.classList.remove('status-pendente','status-andamento','status-concluida','status-cancelada');
+                                    if (data.statusClass) badge.classList.add(data.statusClass);
+                                }
+                            }
+                            btn.remove();
+                        }
+                }catch(err){
+                    console.error(err);
+                    alert('Erro ao marcar como concluída.');
+                }
+            });
+        });
+    });
+</script>

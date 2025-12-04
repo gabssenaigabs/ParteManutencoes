@@ -1,0 +1,155 @@
+@model IEnumerable<CondoHub.Models.Entities.Access>
+
+@{
+    ViewData["Title"] = "Controle de Acesso";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (User?.Identity != null && User.Identity.IsAuthenticated)
+{
+    <partial name="_Sidebar" />
+}
+
+<style>
+    .acesso-header {
+        position: fixed;
+        top: 0;
+        left: 250px;
+        height: 120px;
+        width: calc(100% - 250px);
+        background: linear-gradient(90deg, #14b8a6 0%, #06b6d4 100%);
+        background-size: cover;
+        padding: 25px 0 25px 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        box-shadow: inset 0 -20px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .main-content {
+        margin-left: 250px;
+        margin-top: 120px;
+        position: relative;
+        z-index: 1;
+    }
+</style>
+
+<div class="acesso-header">
+    <div class="d-flex justify-content-between align-items-center w-100" style="height: 100%;">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-shield-lock" style="font-size: 36px; color: white;"></i>
+            <div>
+                <h1 class="mb-0 text-white fw-bold" style="font-size: 32px; line-height: 1;">Controle de Acesso</h1>
+                <p class="mb-0 text-white" style="font-size: 14px; opacity: 0.9;">Registro de entradas e saídas
+
+                </p>
+            </div>
+        </div>
+        <a asp-action="Create" class="btn d-inline-flex align-items-center"
+            style="background: #fff; color: #14b8a6; border: none; min-width: 140px; font-weight: 500; font-size: 16px; margin-right: 36px; text-decoration:none;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"
+                stroke="#14b8a6" stroke-width="2" style="margin-right: 6px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Registrar Acesso
+        </a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="container mt-5">
+        <div class="card"
+            style="padding: 20px; border-radius: 12px; border: 1px solid #e9eef2; box-shadow: 0 1px 4px rgba(16,24,40,0.03);">
+            <div style="margin-bottom: 12px;">
+                <h5 style="font-size: 18px; font-weight: 600; color: #2D3748; margin-bottom:4px;">Registro de Acessos
+                </h5>
+                <p style="font-size: 14px; color: #8b96a8; margin: 0;">@Model.Count() registro(s) encontrado(s)</p>
+            </div>
+
+            @if (Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <div
+                        style="background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #e5e5e5; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; align-items: flex-start; gap: 16px;">
+                            <div class="sidebar-avatar"
+                                style="flex-shrink:0; width:48px; height:48px; display:flex; align-items:center; justify-content:center;">
+                                @((item.Nome ?? "").Length > 1 ? (item.Nome ?? "").Substring(0, 2).ToUpper() : ((item.Nome ??
+                                                        "") == "" ? "US" : (item.Nome ?? "").Substring(0, 1).ToUpper()))
+                            </div>
+
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                    <p style="margin: 0; font-size: 15px; font-weight: 600; color: #2D3748;">@item.Nome</p>
+                                    @if (!string.IsNullOrEmpty(item.Cargo))
+                                    {
+                                        <span class="badge"
+                                            style="background:#f0f0f0; color:#666; font-size:13px; font-weight:600; padding:6px 16px; border-radius:6px; white-space:nowrap;">@item.Cargo</span>
+                                    }
+                                </div>
+
+                                <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 8px;">
+                                    @if (!string.IsNullOrEmpty(item.NumeroApartamento))
+                                    {
+                                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #8b96a8;">
+                                            <i class="bi bi-door-closed" style="font-size: 14px;"></i>
+                                            Apto @item.NumeroApartamento
+                                        </div>
+                                    }
+
+                                    <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #8b96a8;">
+                                        <i class="bi bi-calendar3" style="font-size: 14px;"></i>
+                                        @item.DataHoraAcesso.ToString("dd/MM/yyyy")
+                                    </div>
+
+                                    @if (item.TipoAcesso == "Entrada")
+                                    {
+                                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #22863a;">
+                                            <i class="bi bi-box-arrow-in-right" style="font-size: 14px;"></i>
+                                            Entrada: @item.DataHoraAcesso.ToString("HH:mm")
+                                        </div>
+                                    }
+                                    else if (item.TipoAcesso == "Saida" || item.TipoAcesso == "Saída")
+                                    {
+                                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #cb2431;">
+                                            <i class="bi bi-box-arrow-right" style="font-size: 14px;"></i>
+                                            Saída: @item.DataHoraAcesso.ToString("HH:mm")
+                                        </div>
+                                    }
+                                    else if (!string.IsNullOrEmpty(item.Observacoes))
+                                    {
+                                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #6b7280;">
+                                            <i class="bi bi-chat-left-text" style="font-size: 14px;"></i>
+                                            @item.Observacoes
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="padding: 40px 20px; text-align: center;">
+                    <p style="font-size:16px; color:#6b7280; margin:0;">Nenhum registro de acesso encontrado.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.btn-sm').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                if (this.classList.contains('btn-danger')) {
+                    if (!confirm('Tem certeza que deseja deletar este registro?')) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        });
+    </script>
+}
